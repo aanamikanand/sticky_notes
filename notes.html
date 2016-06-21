@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <meta charset="utf-8" />
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.5/react.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.5/react-dom.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+ <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css" />
+ <link rel='stylesheet' href='stylesheets/style.css' type='text/css' />
+ </head>
+ <body>
+   <div id='content' class='container'>
+   </div>
+   <script type='text/babel'>
+      class Stickynote extends React.Component {
+      	constructor(props) {
+      		super(props);
+      		this.state = { notes: [], nextId:0};
+      		this.addNote = this.addNote.bind(this);
+      		this.notes = this.notes.bind(this);
+      		this.deleteNote = this.deleteNote.bind(this);
+      	}
+
+      	deleteNote(id) {
+      		let notes = this.state.notes;
+      		let index = notes.findIndex( x => x.id === id);
+      		notes.splice(index, 1);
+      		this.setState({ notes});
+      	}
+
+      	addNote(e) {
+      		e.preventDefault();
+      		let notes = [{name: this.refs.name.value, id: this.state.nextId}, ...this.state.notes ]
+      		this.refs.name.value = null;
+      		this.setState({ notes, nextId: ++this.state.nextId});
+      	}
+
+      	notes() { 
+      		let notes = this.state.notes.map(note => {
+      			return(<div key={`note-${note.id}`}>
+      							<div className='card crd-dsgn'	>
+	      							<div>
+	      				        {note.name}
+	      				      </div>
+	      				      <div className="btn #7b1fa2 purple darken-2" onClick={this.editNote}>
+	      				        Edit
+	      				      </div>
+	      				      <div className="btn red" onClick={() => this.deleteNote(note.id)}>
+	      				        X
+	      				      </div>
+	      				    </div>
+      				    </div>)
+      		});
+      		return notes;
+      	}
+
+      	render() {
+      		return(
+      			<div className = 'center'>
+      				<h1> {this.props.title} </h1>
+      				<form onSubmit={this.addNote}>
+      				<input className='input-style' type='text' required placeholder='Note Name' ref='name' />
+      				<input type='submit' className='btn #7b1fa2 purple darken-2' value='Add Note' />
+      				</form>
+      				<h3> Notes </h3>
+      				<div>
+      					{this.notes()}
+      				</div>
+      			</div>
+      		)
+      	}
+      }
+
+      ReactDOM.render(<Stickynote title='Sticky Notes' />, document.getElementById('content'));
+   </script>
+  </body>
+</html>
